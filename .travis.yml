@@ -1,7 +1,6 @@
 sudo: false
 dist: trusty
 language: node_js
-
 node_js:
   - 6
   - 8
@@ -30,7 +29,7 @@ deploy:
   email: remi@cliqz.com
   skip_cleanup: true
   api_key:
-    secure: rr3B10h5RPAM+Lbqsqcvwvrhe6qOhnEiTt103lZ/QPtJC+ie1oQugrAxLK6eTn0DeYaSupDfRGIUHL7M6otM0TAwBp652YX+Yjs5lUXbrMu8wRS5L3txx0DUTa7rHs6CgQ17GgQESnAnt5CL4WOcLLZt3BVI7+aIYv4ayr0TmRZh3zokX8e39bQ5rU252ypK4ynCPr0GePjvjWowtnGrNw8vZeV0TGRlb04+DqnabgJq/+e02o/dzTR/Lo9R/uoUC2RTiQ9FcVKF/VdUwiHjL7+TEYhPp4q62Yspa9IAA7i9l+18Woi6WtoqHwGIQkUTQLgkHfjz7kl7ib2hTDmZnv7Qj9QVZ34BScI64igHHER26bNbrwl93XCT3RLpKVHWaTW8QI+O7+Rfpx0xuq7/cWrzwTlh7miFQlFPuV++lbnGFif3AJW+XMqQ0CFt6B7ITOaWuRs6gciB4e08bjDPKNIuuBpdDWkzhRzBfkSwfqd+heLzmt+nkn3xE+hEUSs7631eUchPFUBBoF9DfASES8JYh8QlGqBq9qxnH0KWDBEAT88OvKZa++PIv7Fys+12Dpo7Vnbf4K+3uqs0HodvpxEDT102Gvmyn8a3AdFeH8L9+Fouq4BKS6/ukVuUYkIsdiUsgyOq8sZV4M4iBTyCY7zdzcTyqTgw6z0NvTUSBH0=
+    secure: tpCPNABswO9sXKN8d7oQx3+5yoPlnbvMAJ2XcV7sUsowq7463sQPpBZ8hTmbrmGy+9+i8NAqB9/+8nTF3yu8mGA+NTbsJ0o0sSK3hHuRmXACCmaetXW8e8LZ1B3UwhXa25Qr+F3jx6EPcDkcBij1+lRQxC/pYsVjiCDw/I2LNvLT7WBHuS5CQTvjIGQMxgK7PIHNDrEYZax8PBKWGXRp06c2l1S1aRECb73PKPdU8afTZCMXKKxC3ElPxSe8C5wziQuItWN48VQVj5vZYSroN2fDi/SoTK4Mj4vTLnYzQhLhhkTRtuW5MUc91xQhcT0m/DDq8Rbg3P+xtMtMG1FDw47hSMWQpXP1sMxreb9ROQSwc0acWP/rOVqvFypHXarRUYvfhHU6ptzlPUVdE7kCHiMxVxR0VrpBaLShwELo3h9ypa4Hy/GFwMZ0tQXpWOQAcEgGbtblyy8nyH/ghUaFpwNlBbK3Hr2plEq4b/RtU8yhit+NDSzXbdpetW2gbmWVuEgMQW4RudJxZMZws7Bf12BPaBDnqwiLSzDulkh4WeG/ZscwN/zmum++4gTUa0beX54Pvn0b2S0Dsfn33iQJ3NQNFdCikpWpV+d4Tu8tLLrZf+ePoGhXHvs2PSYlpQdd+WPic1wUuiiu0S7O4pogLYMls5IYUCTHJmu9ORPYCJc=
   on:
     branch: master
     tags: true
