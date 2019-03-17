@@ -9,18 +9,19 @@ From the original library:
 > for compressing data dynamically, in order to be able to compress every kind
 > of data. This is a very good idea, but not for a specific problem: compressing
 > small strings will not work.
-
+>
 > Smaz instead is not good for compressing general purpose data, but can compress
 > text by 40-50% in the average case (works better with English), and is able to
 > perform a bit of compression for HTML and urls as well. The important point is
 > that Smaz is able to compress even strings of two or three bytes!
-
+>
 > For example the string "the" is compressed into a single byte.
-
+>
 > To compare this with other libraries, think that like zlib will usually not be able to compress text shorter than 100 bytes.
 
 ## Usage
 
+Install,
 ```sh
 npm install tsmaz
 ```
@@ -31,6 +32,21 @@ const { compress, decompress } = require('tsmaz');
 
 const compressed = compress('foobar');
 console.log(decompress(compressed));
+```
+
+It is also possible to use a custom codebook:
+```javascript
+const { factory } = require('tsmaz');
+
+// NOTE: this array needs to have a maximum length of 254!
+const { compress, decompress } = factory([
+  'foo',
+  'bar',
+  'foobar',
+  'er,
+  'ab,
+  'aa',
+];
 ```
 
 ## Performance
