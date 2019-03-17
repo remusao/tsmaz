@@ -1,0 +1,41 @@
+{
+  "name": "tsmaz",
+  "version": "1.0.0",
+  "description": "TypeScript port of the smaz string compression library",
+  "main": "dist/tsmaz.cjs.js",
+  "browser": "dist/tsmaz.umd.js",
+  "module": "dist/tsmaz.esm.js",
+  "types": "dist/tsmaz.d.ts",
+  "files": [
+    "dist",
+    "tsmaz.ts"
+  ],
+  "scripts": {
+    "clean": "rm -rfv dist build",
+    "lint": "tslint -c tslint.json 'tsmaz.ts'",
+    "build": "tsc -p .",
+    "prebuild": "npm run clean",
+    "bundle": "rollup -c rollup.config.js",
+    "prebundle": "npm run build",
+    "minify": "google-closure-compiler --js=./dist/tsmaz.umd.js --js_output_file=./dist/tsmaz.umd.min.js",
+    "preminify": "npm run bundle",
+    "prepack": "npm run minify",
+    "test": "jest --coverage --no-cache ./tsmaz.test.ts"
+  },
+  "keywords": [
+    "smaz",
+    "compression"
+  ],
+  "author": "Rémi Berson",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "google-closure-compiler": "^20190301.0.0",
+    "jest": "^24.5.0",
+    "prettier": "^1.16.4",
+    "rollup": "^1.6.0",
+    "ts-jest": "^24.0.0",
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.3333"
+  }
+}
