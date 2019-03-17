@@ -43,7 +43,7 @@ const { compress, decompress } = factory([
   'foo',
   'bar',
   'foobar',
-  'er,
+  'er',
   'ab,
   'aa',
 ];
