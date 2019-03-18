@@ -16,4 +16,9 @@ export default [
       { file: pkg.main, format: 'cjs' },
     ],
   },
+  {
+    input: './build/generate_codebook.js',
+    external: ['fs'],
+    output: { file: './dist/generate_codebook.js', format: 'cjs' },
+  },
 ];

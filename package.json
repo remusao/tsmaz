@@ -1,6 +1,6 @@
 {
   "name": "tsmaz",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TypeScript port of the smaz string compression library",
   "main": "dist/tsmaz.cjs.js",
   "browser": "dist/tsmaz.umd.js",
@@ -20,7 +20,9 @@
     "minify": "google-closure-compiler --js=./dist/tsmaz.umd.js --js_output_file=./dist/tsmaz.umd.min.js",
     "preminify": "npm run bundle",
     "prepack": "npm run minify",
-    "test": "jest --coverage --no-cache ./tsmaz.test.ts"
+    "test": "jest --coverage --no-cache ./tsmaz.test.ts",
+    "generate_codebook": "node ./dist/generate_codebook.js",
+    "pregenerate_codebook": "npm pack"
   },
   "keywords": [
     "smaz",
@@ -30,11 +32,13 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^24.0.11",
+    "@types/node": "^11.11.3",
     "google-closure-compiler": "^20190301.0.0",
     "jest": "^24.5.0",
     "prettier": "^1.16.4",
     "rollup": "^1.6.0",
     "ts-jest": "^24.0.0",
+    "ts-node": "^8.0.3",
     "tslint": "^5.14.0",
     "typescript": "^3.3.3333"
   }
