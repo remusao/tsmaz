@@ -49,6 +49,18 @@ const { compress, decompress } = factory([
 ];
 ```
 
+## Generating Codebooks
+
+Make sure to create a file `strings.txt` in the root of the repository. This
+file should contain one string per line. Then run:
+
+```javascript
+$ npm run generate_codebook
+```
+
+It might take a while but will eventually display a list of 254 strings that
+you can use as a codebook to compress your data.
+
 ## Performance
 
 `tsmaz` makes use of a trie data-structure for look-up (whereas the original
