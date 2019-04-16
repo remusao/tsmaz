@@ -41,11 +41,15 @@ function run(
 }
 
 function getNextBestSubstring(strings: string[]): string {
+  const maxNgramSize = 200;
   const substrings = new Counter();
 
-  const alphaTokens = /[a-zA-Z0-9]{11,}/g;
-  const alphaDashTokens = /[a-zA-Z0-9_-]{11,}/g;
-  const alphaDashDotTokens = /a-zA-Z0-9_.-]{11,}/g;
+  const alphaTokens = new RegExp(`[a-z0-9]{${maxNgramSize + 1},}`, 'gi');
+  const alphaDashTokens = new RegExp(`[a-z0-9_-]{${maxNgramSize + 1},}`, 'gi');
+  const alphaDashDotTokens = new RegExp(
+    `[a-z0-9_.-]{${maxNgramSize + 1},}`,
+    'gi',
+  );
   for (let i = 0; i < strings.length; i += 1) {
     const str = strings[i];
     if (str.length === 0) {
@@ -66,7 +70,7 @@ function getNextBestSubstring(strings: string[]): string {
     const len = str.length;
     for (let j = 0; j < len - 1; j += 1) {
       const remainingChars = len - j;
-      for (let k = 2; k <= 10 && k <= remainingChars; k += 1) {
+      for (let k = 2; k <= maxNgramSize && k <= remainingChars; k += 1) {
         substrings.incr(str.slice(j, j + k));
       }
     }
