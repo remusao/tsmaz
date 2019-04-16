@@ -15,14 +15,10 @@
     "lint": "tslint -c tslint.json 'tsmaz.ts'",
     "build": "tsc -p .",
     "prebuild": "npm run clean",
-    "bundle": "rollup -c rollup.config.js",
+    "bundle": "rollup -c rollup.config.ts",
     "prebundle": "npm run build",
-    "minify": "google-closure-compiler --js=./dist/tsmaz.umd.js --js_output_file=./dist/tsmaz.umd.min.js",
-    "preminify": "npm run bundle",
-    "prepack": "npm run minify",
-    "test": "jest --coverage --no-cache ./tsmaz.test.ts",
-    "generate_codebook": "node ./dist/generate_codebook.js",
-    "pregenerate_codebook": "npm pack"
+    "prepack": "npm run bundle",
+    "test": "jest --coverage --no-cache ./tsmaz.test.ts"
   },
   "keywords": [
     "smaz",
@@ -33,7 +29,6 @@
   "devDependencies": {
     "@types/jest": "^24.0.11",
     "@types/node": "^11.13.4",
-    "google-closure-compiler": "^20190325.0.0",
     "jest": "^24.7.1",
     "prettier": "^1.17.0",
     "rollup": "^1.10.0",
@@ -41,5 +36,6 @@
     "ts-node": "^8.1.0",
     "tslint": "^5.15.0",
     "typescript": "^3.4.3"
-  }
+  },
+  "dependencies": {}
 }

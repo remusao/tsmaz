@@ -51,15 +51,29 @@ const { compress, decompress } = factory([
 
 ## Generating Codebooks
 
-Make sure to create a file `strings.txt` in the root of the repository. This
-file should contain one string per line. Then run:
+The library exports a `generate` function, which accepts a list of strings which
+you would like to compress, then learns a dictionary which works well with the
+kind of data given as input.
 
 ```javascript
-$ npm run generate_codebook
-```
+const { generate, factory } = require('tsmaz');
 
-It might take a while but will eventually display a list of 254 strings that
-you can use as a codebook to compress your data.
+// Generate codebook
+const codebook = generate([
+  'foo',
+  'foobar',
+  'bar',
+  'baz-bar',
+]);
+
+// Use custom codebook
+const { compress, decompress } = factory(codebook);
+
+const compressed = compress('foo-barbaz');
+console.log(compressed);
+const original = decompress(compressed);
+console.log(original);
+```
 
 ## Performance
 

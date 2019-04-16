@@ -1,5 +1,4 @@
-import { readFileSync } from 'fs';
-import { factory } from './tsmaz';
+import factory from './factory';
 
 class Counter {
   private map: Map<string, number>;
@@ -80,12 +79,10 @@ function getNextBestSubstring(strings: string[]): string {
   let bestScore = 0;
   let bestSubstring = '';
   for (const [substring, count] of substrings.entries()) {
-    if (count >= 5) {
-      const score = count * substring.length ** 2.2;
-      if (score > bestScore) {
-        bestSubstring = substring;
-        bestScore = score;
-      }
+    const score = count * substring.length ** 2.2;
+    if (score > bestScore) {
+      bestSubstring = substring;
+      bestScore = score;
     }
   }
 
@@ -100,12 +97,17 @@ function getCompressionRatio(codebook: string[], strings: string[]): number {
   return 100.0 * (totalCompressed / totalUncompressed);
 }
 
-function generateCodebook(originalStrings: string[]): string[] {
+export default function generate(originalStrings: string[]): string[] {
   let strings = originalStrings;
   const codebook: string[] = [];
 
   for (let i = 0; i < 254; i += 1) {
     const substring = getNextBestSubstring(strings);
+    if (!substring) {
+      console.log('No more strings', i);
+      break;
+    }
+
     codebook.push(substring);
     console.log(
       `+ ${substring} = ${getCompressionRatio(codebook, originalStrings)}%`,
@@ -125,8 +127,8 @@ function generateCodebook(originalStrings: string[]): string[] {
 
   // Count remaining occurrences of letters in strings
   const letters = new Counter();
-  for (let i = 0; i < strings.length; i += 1) {
-    const str = strings[i];
+  for (let i = 0; i < originalStrings.length; i += 1) {
+    const str = originalStrings[i];
     for (let j = 0; j < str.length; j += 1) {
       letters.incr(str[j]);
     }
@@ -136,16 +138,31 @@ function generateCodebook(originalStrings: string[]): string[] {
   const lettersCodebook = [...letters.entries()].sort(
     ([, c1], [, c2]) => c2 - c1,
   );
+  console.log(lettersCodebook);
 
   let bestRatio = getCompressionRatio(codebook, originalStrings);
 
   // Fine-tune codebook with letters
   for (let i = 0; i < lettersCodebook.length; i += 1) {
+    const letter = lettersCodebook[i][0];
+
+    // If codebook is not full yet, just add the letter at the end
+    if (codebook.length < 254) {
+      codebook.push(letter);
+      console.log(
+        `Codebook not full, adding letter: ${letter} = ${getCompressionRatio(
+          codebook,
+          originalStrings,
+        )}`,
+      );
+      continue;
+    }
+
+    // Codebook is full, try to find a spot
     let bestR = 100;
     let insertAt = -1;
-    const letter = lettersCodebook[i][0];
     console.log('> letter', letter);
-    for (let j = 0; j < 254; j += 1) {
+    for (let j = 0; j < codebook.length; j += 1) {
       const prev = codebook[j];
       codebook[j] = letter;
       const ratio = getCompressionRatio(codebook, originalStrings);
@@ -165,15 +182,3 @@ function generateCodebook(originalStrings: string[]): string[] {
 
   return codebook;
 }
-
-function main() {
-  console.log('Generating optimized codebook from ./strings.txt');
-  const codebook = generateCodebook(
-    readFileSync('strings.txt', {
-      encoding: 'utf-8',
-    }).split(/[\n\r]+/g),
-  );
-  console.log('Best codebook', JSON.stringify(codebook, null, 2));
-}
-
-main();
