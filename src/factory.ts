@@ -1,5 +1,8 @@
 import makeTrie from './trie';
 
+const EMPTY_STRING = '';
+const EMPTY_UINT8_ARRAY = new Uint8Array(0);
+
 const BUFFER = new Uint8Array(30000);
 const VERBATIM = new Uint8Array(255);
 
@@ -22,15 +25,18 @@ export default function factory(codebook: string[]) {
 
   function compressImpl(str: string): Uint8Array {
     if (str.length === 0) {
-      return new Uint8Array(0);
+      return EMPTY_UINT8_ARRAY;
     }
+
     let bufferIndex = 0;
     let verbatimIndex = 0;
     let inputIndex = 0;
+
     while (inputIndex < str.length) {
       let indexAfterMatch = -1;
       let code = -1;
       let root = trie;
+
       for (let j = inputIndex; j < str.length; j += 1) {
         root = root[str[j]];
         if (root === undefined) {
@@ -64,10 +70,10 @@ export default function factory(codebook: string[]) {
 
   function decompressImpl(arr: Uint8Array): string {
     if (arr.byteLength === 0) {
-      return '';
+      return EMPTY_STRING;
     }
 
-    let output = '';
+    let output = EMPTY_STRING;
     let i = 0;
 
     while (i < arr.byteLength) {

@@ -35,7 +35,6 @@
     "./src/dictionary.ts",
     "./src/factory.ts",
     "./src/generate.ts",
-    "./src/trie.ts",
-    "./package.json"
+    "./src/trie.ts"
   ]
 }
