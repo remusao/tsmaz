@@ -3,7 +3,7 @@
     "declaration": true,
     "declarationDir": "dist",
     "types": ["jest", "node"],
-    "target": "ES2018",
+    "target": "ES3",
     "module": "ES6",
     "outDir": "build",
     "newLine": "lf",
@@ -35,6 +35,7 @@
     "./src/dictionary.ts",
     "./src/factory.ts",
     "./src/generate.ts",
-    "./src/trie.ts"
+    "./src/trie.ts",
+    "./package.json"
   ]
 }
