@@ -2,7 +2,8 @@
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "dist",
-    "types": ["jest", "node"],
+    "types": ["jest"],
+    "lib": ["DOM", "ES6"],
     "target": "ES3",
     "module": "ES6",
     "outDir": "build",
