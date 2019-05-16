@@ -39,7 +39,7 @@ It is also possible to use a custom codebook:
 const { factory } = require('tsmaz');
 
 // NOTE: this array needs to have a maximum length of 254!
-const { compress, decompress } = factory([
+const [compress, decompress] = factory([
   'foo',
   'bar',
   'foobar',
@@ -67,7 +67,7 @@ const codebook = generate([
 ]);
 
 // Use custom codebook
-const { compress, decompress } = factory(codebook);
+const [compress, decompress] = factory(codebook);
 
 const compressed = compress('foo-barbaz');
 console.log(compressed);

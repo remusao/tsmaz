@@ -94,7 +94,7 @@ function getNextBestSubstring(strings: string[]): string {
 
 function getCompressionRatio(codebook: string[], strings: string[]): number {
   const { totalCompressed, totalUncompressed } = run(
-    factory(codebook).compress,
+    factory(codebook)[0],
     strings,
   );
   return 100.0 * (totalCompressed / totalUncompressed);

@@ -1,4 +1,4 @@
-import { compress, decompress, factory, generate } from './tsmaz';
+import { compress, decompress, factory, generate } from '.';
 
 describe('tsmaz', () => {
   [
@@ -31,7 +31,7 @@ describe('tsmaz', () => {
       str += 'b';
     }
 
-    expect(custom.decompress(custom.compress(str))).toBe(str);
+    expect(custom[1](custom[0](str))).toBe(str);
   });
 
   describe('#generate', () => {
@@ -40,16 +40,16 @@ describe('tsmaz', () => {
 
       // Compression is one byte for seen strings
       for (const str of ['foo', 'bar', 'baz']) {
-        const compressed = custom.compress(str);
+        const compressed = custom[0](str);
         expect(compressed).toHaveLength(1);
-        expect(custom.decompress(compressed)).toBe(str);
+        expect(custom[1](compressed)).toBe(str);
       }
 
       // No overhead for letters in a different order
       for (const str of ['fof', 'zar', 'boz']) {
-        const compressed = custom.compress(str);
+        const compressed = custom[0](str);
         expect(compressed).toHaveLength(3);
-        expect(custom.decompress(compressed)).toBe(str);
+        expect(custom[1](compressed)).toBe(str);
       }
     });
   });
