@@ -18,7 +18,8 @@
     "bundle": "rollup -c rollup.config.ts",
     "prebundle": "npm run build",
     "prepack": "npm run bundle",
-    "test": "jest --coverage --no-cache ./tsmaz.test.ts"
+    "test": "jest --coverage --no-cache ./tsmaz.test.ts",
+    "pretest": "npm pack"
   },
   "keywords": [
     "smaz",
