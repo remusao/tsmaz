@@ -1,6 +1,6 @@
 import factory from './factory';
 
-class Counter {
+class StringCounter {
   private map: Map<string, number>;
 
   constructor() {
@@ -41,7 +41,7 @@ function run(
 
 function getNextBestSubstring(strings: string[]): string {
   const maxNgramSize = 200;
-  const substrings = new Counter();
+  const substrings = new StringCounter();
 
   const alphaTokens = new RegExp(`[a-z0-9]{${maxNgramSize + 1},}`, 'gi');
   const alphaDashTokens = new RegExp(`[a-z0-9_-]{${maxNgramSize + 1},}`, 'gi');
@@ -133,7 +133,7 @@ export default function generate(originalStrings: string[]): string[] {
   }
 
   // Count remaining occurrences of letters in strings
-  const letters = new Counter();
+  const letters = new StringCounter();
   for (let i = 0; i < originalStrings.length; i += 1) {
     const str = originalStrings[i];
     for (let j = 0; j < str.length; j += 1) {

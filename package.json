@@ -2,6 +2,7 @@
   "name": "tsmaz",
   "version": "1.2.0",
   "description": "TypeScript port of the smaz string compression library",
+  "repository": "https://github.com/remusao/tsmaz",
   "main": "dist/tsmaz.cjs.min.js",
   "browser": "dist/tsmaz.umd.min.js",
   "module": "dist/tsmaz.esm.min.js",
@@ -13,11 +14,10 @@
   "scripts": {
     "clean": "rm -rfv dist build",
     "lint": "tslint -c tslint.json 'tsmaz.ts'",
-    "build": "tsc -p .",
+    "typecheck": "tsc -p . --emitDeclarationOnly",
+    "build": "rollup -c rollup.config.ts",
     "prebuild": "npm run clean",
-    "bundle": "rollup -c rollup.config.ts",
-    "prebundle": "npm run build",
-    "prepack": "npm run bundle",
+    "prepack": "npm run build && npm run lint && npm run typecheck",
     "test": "jest --coverage --no-cache ./tsmaz.test.ts",
     "pretest": "npm pack"
   },
@@ -32,7 +32,9 @@
     "@types/jest": "^24.0.13",
     "jest": "^24.8.0",
     "rollup": "^1.12.1",
+    "rollup-plugin-typescript": "^1.0.1",
     "ts-jest": "^24.0.2",
+    "tslib": "^1.9.3",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5"
   },
