@@ -1,5 +1,18 @@
 # Changelog
 
+### 1.1.0
+
+*2019-05-16*
+
+  - Produce optimized and minified bundles [#1](https://github.com/remusao/tsmaz/pull/1)
+    * Add closure compiler plugin to rollup
+    * Remove dependency to tslib
+    * Produce minified bundles
+    * Produce optimized bundles
+    * Change default entrypoints in package.json
+    * Simplify rollup config
+    * Remove un-needed dependencies + update other ones
+
 ### 1.0.3
 
 *2019-04-17*
