@@ -1,51 +1,47 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 
-function tasks(bundleName) {
-  return [
-    // CommonJS + ES6 + UMD
-    {
-      input: `./build/${bundleName}.js`,
-      output: [
-        { file: `./dist/${bundleName}.esm.js`, format: 'es' },
-        { file: `./dist/${bundleName}.cjs.js`, format: 'cjs' },
-        {
-          file: `./dist/${bundleName}.umd.js`,
-          format: 'umd',
-          name: 'tsmaz',
-        },
-      ],
-    },
-    // ES6 minified
-    {
-      input: `./build/${bundleName}.js`,
-      output: {
-        file: `./dist/${bundleName}.esm.min.js`,
-        format: 'es',
-      },
-      plugins: [
-        compiler({
-          compilation_level: 'ADVANCED_OPTIMIZATIONS',
-        }),
-      ],
-    },
-    // CommonJS minified
-    {
-      input: `./dist/${bundleName}.esm.min.js`,
-      output: {
-        file: `./dist/${bundleName}.cjs.min.js`,
-        format: 'cjs',
-      },
-    },
-    // UMD minified
-    {
-      input: `./dist/${bundleName}.esm.min.js`,
-      output: {
-        file: `./dist/${bundleName}.umd.min.js`,
+export default [
+  // CommonJS + ES6 + UMD
+  {
+    input: './build/tsmaz.js',
+    output: [
+      { file: './dist/tsmaz.esm.js', format: 'es' },
+      { file: './dist/tsmaz.cjs.js', format: 'cjs' },
+      {
+        file: './dist/tsmaz.umd.js',
         format: 'umd',
         name: 'tsmaz',
       },
+    ],
+  },
+  // ES6 minified
+  {
+    input: './build/tsmaz.js',
+    output: {
+      file: './dist/tsmaz.esm.min.js',
+      format: 'es',
     },
-  ];
-}
-
-export default tasks('tsmaz');
+    plugins: [
+      compiler({
+        compilation_level: 'ADVANCED_OPTIMIZATIONS',
+      }),
+    ],
+  },
+  // CommonJS minified
+  {
+    input: './dist/tsmaz.esm.min.js',
+    output: {
+      file: './dist/tsmaz.cjs.min.js',
+      format: 'cjs',
+    },
+  },
+  // UMD minified
+  {
+    input: './dist/tsmaz.esm.min.js',
+    output: {
+      file: './dist/tsmaz.umd.min.js',
+      format: 'umd',
+      name: 'tsmaz',
+    },
+  },
+];
