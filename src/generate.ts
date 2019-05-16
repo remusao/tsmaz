@@ -78,7 +78,10 @@ function getNextBestSubstring(strings: string[]): string {
   // Get best substring based on length and number of occurrences
   let bestScore = 0;
   let bestSubstring = '';
-  for (const [substring, count] of substrings.entries()) {
+  const counts: Array<[string, number]> = Array.from(substrings.entries());
+  for (let i = 0; i < counts.length; i += 1) {
+    const substring = counts[i][0];
+    const count = counts[i][1];
     const score = count * substring.length ** 2.2;
     if (score > bestScore) {
       bestSubstring = substring;
@@ -114,9 +117,13 @@ export default function generate(originalStrings: string[]): string[] {
     );
 
     const newStrings = [];
-    for (const str of strings) {
+    for (let j = 0; j < strings.length; j += 1) {
+      const str = strings[j];
       if (str.indexOf(substring) !== -1) {
-        newStrings.push(...str.split(substring));
+        const parts = str.split(substring);
+        for (let k = 0; k < parts.length; k += 1) {
+          newStrings.push(parts[k]);
+        }
       } else {
         newStrings.push(str);
       }
@@ -135,8 +142,8 @@ export default function generate(originalStrings: string[]): string[] {
   }
 
   // Sort letters from most popular to least popular
-  const lettersCodebook = [...letters.entries()].sort(
-    ([, c1], [, c2]) => c2 - c1,
+  const lettersCodebook = Array.from(letters.entries()).sort(
+    (v1, v2) => v2[1] - v1[1],
   );
   console.log(lettersCodebook);
 

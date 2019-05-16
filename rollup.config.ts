@@ -1,28 +1,47 @@
-import commonjs from 'rollup-plugin-commonjs';
-import resolve from 'rollup-plugin-node-resolve';
-import pkg from './package.json';
+import compiler from '@ampproject/rollup-plugin-closure-compiler';
 
 export default [
+  // CommonJS + ES6 + UMD
+  {
+    input: './build/tsmaz.js',
+    output: [
+      { file: './dist/tsmaz.esm.js', format: 'es' },
+      { file: './dist/tsmaz.cjs.js', format: 'cjs' },
+      {
+        file: './dist/tsmaz.umd.js',
+        format: 'umd',
+        name: 'tsmaz',
+      },
+    ],
+  },
+  // ES6 minified
   {
     input: './build/tsmaz.js',
     output: {
-      file: pkg.browser,
-      format: 'umd',
-      name: pkg.name,
+      file: './dist/tsmaz.esm.min.js',
+      format: 'es',
     },
     plugins: [
-      resolve({
-        preferBuiltins: false,
+      compiler({
+        compilation_level: 'ADVANCED_OPTIMIZATIONS',
       }),
-      commonjs(),
     ],
   },
+  // CommonJS minified
   {
-    external: ['tslib'],
-    input: './build/tsmaz.js',
-    output: [
-      { file: pkg.module, format: 'es' },
-      { file: pkg.main, format: 'cjs' },
-    ],
+    input: './dist/tsmaz.esm.min.js',
+    output: {
+      file: './dist/tsmaz.cjs.min.js',
+      format: 'cjs',
+    },
+  },
+  // UMD minified
+  {
+    input: './dist/tsmaz.esm.min.js',
+    output: {
+      file: './dist/tsmaz.umd.min.js',
+      format: 'umd',
+      name: 'tsmaz',
+    },
   },
 ];

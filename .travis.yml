@@ -1,15 +1,9 @@
-sudo: false
-dist: trusty
+dist: xenial
 language: node_js
-node_js:
-  - 6
-  - 8
-  - 9
-  - node
 
-cache:
-  directories:
-  - node_modules
+node_js:
+  - lts/*
+  - node
 
 notifications:
   email:
@@ -18,11 +12,7 @@ notifications:
 before_install:
   - npm install -g npm@latest
 
-install:
-  - npm ci
-
-script:
-  - npm run test
+cache: npm
 
 deploy:
   provider: npm
