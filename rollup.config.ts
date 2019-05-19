@@ -23,7 +23,6 @@ export default [
     output: {
       file: './dist/tsmaz.esm.min.js',
       format: 'es',
-      sourcemap: true,
     },
     plugins: [
       typescript(),
@@ -41,13 +40,11 @@ export default [
       {
         file: './dist/tsmaz.cjs.min.js',
         format: 'cjs',
-        sourcemap: true,
       },
       {
         file: './dist/tsmaz.umd.min.js',
         format: 'umd',
         name: 'tsmaz',
-        sourcemap: true,
       },
     ],
   },

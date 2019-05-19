@@ -2,6 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "dist",
+    "sourceMap": true,
     "types": ["jest"],
     "lib": ["DOM", "ES6"],
     "target": "ES3",

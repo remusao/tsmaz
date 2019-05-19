@@ -41,7 +41,7 @@ export default function factory(
         let root = trie;
 
         for (let j = inputIndex; j < str.length; j += 1) {
-          root = root[str[j]];
+          root = root.chars[str[j]];
           if (root === undefined) {
             break;
           }
