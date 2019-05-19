@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.2.1
+
+*2019-05-19*
+
+ - Add benchmarks + small optimization [27be341](https://github.com/remusao/tsmaz/commit/27be341fe3a91d36f464d8f91a9e995698a7a293)
+
 ### 1.2.0
 
 *2019-05-16*
@@ -7,7 +13,6 @@
   - Use optimized bundle in tests + fixes [d253233](https://github.com/remusao/tsmaz/commit/d253233a9db418ee4c88df8aef8dfc95ca73735d)
     * Import optimized cjs bundle + type definitions for tests
     * Change API of factory to not rely on named attributes
-
 
 ### 1.1.0
 
