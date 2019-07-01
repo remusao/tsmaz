@@ -1,4 +1,5 @@
-import * as minifiedTsmaz from '.';
+// @ts-ignore
+import * as minifiedTsmaz from './dist/tsmaz.cjs.min.js';
 import * as tsmaz from './tsmaz';
 
 function tests(
