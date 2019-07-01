@@ -1,9 +1,3 @@
-import defaultDictionary from './src/dictionary';
-import factory from './src/factory';
-import generate from './src/generate';
-
-const defaultSmaz = factory(defaultDictionary);
-const compress = defaultSmaz[0];
-const decompress = defaultSmaz[1];
-
-export { compress, decompress, factory, generate };
+export { default as factory } from './src/factory';
+export { default as generate } from './src/generate';
+export * from './src/default';

@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.2.2
+
+*2019-06-07*
+
+  - prevent global computation on import and expose both cjs and es6 sources
+
 ### 1.2.1
 
 *2019-05-19*

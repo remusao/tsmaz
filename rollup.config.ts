@@ -1,42 +1,15 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
-import typescript from 'rollup-plugin-typescript';
 
 export default [
-  // CommonJS + ES6 + UMD
+  // ES6 + UMD + CommonJS minified
   {
-    input: './tsmaz.ts',
+    input: './build/es6/tsmaz.js',
     output: [
-      { file: './dist/tsmaz.esm.js', format: 'es', sourcemap: true },
-      { file: './dist/tsmaz.cjs.js', format: 'cjs', sourcemap: true },
       {
-        file: './dist/tsmaz.umd.js',
-        format: 'umd',
-        name: 'tsmaz',
+        file: './dist/tsmaz.esm.min.js',
+        format: 'es',
         sourcemap: true,
       },
-    ],
-    plugins: [typescript()],
-  },
-  // ES6 minified
-  {
-    input: './tsmaz.ts',
-    output: {
-      file: './dist/tsmaz.esm.min.js',
-      format: 'es',
-    },
-    plugins: [
-      typescript(),
-      compiler({
-        compilation_level: 'ADVANCED_OPTIMIZATIONS',
-        language_out: 'NO_TRANSPILE',
-        warning_level: 'DEFAULT',
-      }),
-    ],
-  },
-  // UMD + CommonJS minified
-  {
-    input: './dist/tsmaz.esm.min.js',
-    output: [
       {
         file: './dist/tsmaz.cjs.min.js',
         format: 'cjs',
@@ -46,6 +19,12 @@ export default [
         format: 'umd',
         name: 'tsmaz',
       },
+    ],
+    plugins: [
+      compiler({
+        language_out: 'NO_TRANSPILE',
+        warning_level: 'DEFAULT',
+      }),
     ],
   },
 ];
