@@ -31,7 +31,7 @@
   "author": "Rémi Berson",
   "license": "MIT",
   "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "^0.9.0",
+    "@ampproject/rollup-plugin-closure-compiler": "^0.10.0",
     "@types/jest": "^24.0.13",
     "benchmark": "^2.1.4",
     "concurrently": "^4.1.1",
