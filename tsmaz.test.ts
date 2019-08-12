@@ -5,17 +5,17 @@ import * as tsmaz from './tsmaz';
 function tests(
   name: string,
   {
+    Smaz,
     compress,
     decompress,
-    factory,
     generate,
+    getCompressedSize,
   }: {
+    Smaz: any;
     compress: (str: string) => Uint8Array;
     decompress: (arr: Uint8Array) => string;
-    factory: (
-      codebook: string[],
-    ) => [(str: string) => Uint8Array, (arr: Uint8Array) => string];
     generate: (strings: string[]) => string[];
+    getCompressedSize: (str: string) => number;
   },
 ) {
   describe(`tsmaz (${name})`, () => {
@@ -37,42 +37,47 @@ function tests(
       'http://github.com/antirez/smaz/tree/master',
     ].forEach(str => {
       it(str, () => {
-        expect(decompress(compress(str))).toEqual(str);
+        const compressed = compress(str);
+        expect(compressed.length).toEqual(getCompressedSize(str));
+        expect(decompress(compressed)).toEqual(str);
       });
     });
 
     it('fills verbatim buffer', () => {
-      const custom = factory(['foo']);
+      const custom = new Smaz(['foo']);
 
       let str = '';
       for (let i = 0; i <= 256; i += 1) {
         str += 'b';
       }
 
-      expect(custom[1](custom[0](str))).toBe(str);
+      const compressed = custom.compress(str);
+      expect(compressed.length).toEqual(custom.getCompressedSize(str));
+      expect(custom.decompress(compressed)).toEqual(str);
     });
 
     describe('#generate', () => {
       it('has perfect compression on small input', () => {
-        const custom = factory(generate(['foo', 'bar', 'baz']));
+        const custom = new Smaz(generate(['foo', 'bar', 'baz']));
 
         // Compression is one byte for seen strings
         for (const str of ['foo', 'bar', 'baz']) {
-          const compressed = custom[0](str);
+          const compressed = custom.compress(str);
           expect(compressed).toHaveLength(1);
-          expect(custom[1](compressed)).toBe(str);
+          expect(custom.decompress(compressed)).toBe(str);
         }
 
         // No overhead for letters in a different order
         for (const str of ['fof', 'zar', 'boz']) {
-          const compressed = custom[0](str);
+          const compressed = custom.compress(str);
           expect(compressed).toHaveLength(3);
-          expect(custom[1](compressed)).toBe(str);
+          expect(custom.decompress(compressed)).toBe(str);
         }
       });
     });
   });
 }
 
+// @ts-ignore
 tests('minified', minifiedTsmaz);
 tests('ts', tsmaz);

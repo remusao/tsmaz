@@ -36,10 +36,10 @@ console.log(decompress(compressed));
 
 It is also possible to use a custom codebook:
 ```javascript
-const { factory } = require('tsmaz');
+const { Smaz } = require('tsmaz');
 
 // NOTE: this array needs to have a maximum length of 254!
-const [compress, decompress] = factory([
+const smaz = new Smaz([
   'foo',
   'bar',
   'foobar',
@@ -47,6 +47,8 @@ const [compress, decompress] = factory([
   'ab',
   'aa',
 ];
+
+smaz.decompress(smaz.compress('foo'));
 ```
 
 ## Generating Codebooks
@@ -56,7 +58,7 @@ you would like to compress, then learns a dictionary which works well with the
 kind of data given as input.
 
 ```javascript
-const { generate, factory } = require('tsmaz');
+const { generate, Smaz } = require('tsmaz');
 
 // Generate codebook
 const codebook = generate([
@@ -67,11 +69,11 @@ const codebook = generate([
 ]);
 
 // Use custom codebook
-const [compress, decompress] = factory(codebook);
+const smaz = new Smaz(codebook);
 
-const compressed = compress('foo-barbaz');
+const compressed = smaz.compress('foo-barbaz');
 console.log(compressed);
-const original = decompress(compressed);
+const original = smaz.decompress(compressed);
 console.log(original);
 ```
 
@@ -79,5 +81,5 @@ console.log(original);
 
 `tsmaz` makes use of a trie data-structure for look-up (whereas the original
 implementation used a hashtable). Apart from that the behavior should be the
-same, and performance is pretty good (around 10k bytes per millisecond for
+same, and performance is pretty good (around 32k bytes per millisecond for
 compression and 70k bytes per millisecond for decompression).

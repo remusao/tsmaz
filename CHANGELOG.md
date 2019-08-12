@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.3.0
+
+*2019-09-12*
+
+  - add ability to know size of compressed string without doing the actual compression
+
 ### 1.2.2
 
 *2019-06-07*
