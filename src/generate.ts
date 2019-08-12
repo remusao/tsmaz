@@ -1,4 +1,4 @@
-import factory from './factory';
+import Smaz from './factory';
 
 class StringCounter {
   private map: Map<string, number>;
@@ -93,8 +93,9 @@ function getNextBestSubstring(strings: string[]): string {
 }
 
 function getCompressionRatio(codebook: string[], strings: string[]): number {
+  const smaz = new Smaz(codebook);
   const { totalCompressed, totalUncompressed } = run(
-    factory(codebook)[0],
+    str => smaz.compress(str),
     strings,
   );
   return 100.0 * (totalCompressed / totalUncompressed);

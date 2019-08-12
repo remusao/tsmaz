@@ -1,4 +1,4 @@
-interface ITrie {
+export interface ITrie {
   chars: {
     [key: string]: ITrie;
   };
