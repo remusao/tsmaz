@@ -12,7 +12,18 @@ class StringCounter {
   }
 
   public decr(key: string): void {
-    this.map.set(key, (this.map.get(key) || 1) - 1);
+    const count: number | undefined = this.map.get(key);
+
+    if (count === undefined) {
+      return;
+    }
+
+    if (count <= 1) {
+      this.map.delete(key);
+      return;
+    }
+
+    this.map.set(key, count - 1);
   }
 
   public delete(key: string): void {
@@ -50,18 +61,16 @@ function extractNgrams(str: string): string[] {
   return ngrams;
 }
 
-function addCounts(strings: string[], counter: StringCounter): void {
-  for (let i = 0; i < strings.length; i += 1) {
-    counter.update(extractNgrams(strings[i]));
+function addCounts(strings: Set<string>, counter: StringCounter): void {
+  for (const str of strings) {
+    counter.update(extractNgrams(str));
   }
 }
 
-function delCounts(strings: string[], counter: StringCounter): void {
-  for (let i = 0; i < strings.length; i += 1) {
-    const str = strings[i];
-    const ngrams = extractNgrams(str);
-    for (let j = 0; j < ngrams.length; j += 1) {
-      counter.decr(ngrams[j]);
+function delCounts(strings: Set<string>, counter: StringCounter): void {
+  for (const str of strings) {
+    for (const ngram of extractNgrams(str)) {
+      counter.decr(ngram);
     }
   }
 }
@@ -71,7 +80,7 @@ function getNextBestSubstring(substrings: StringCounter): string {
   let bestScore = 0;
   let bestSubstring = '';
   for (const [substring, count] of substrings.entries()) {
-    // const score = count * substring.length * Math.log(substring.length);
+    // Who does not like a bit of magic?
     const score = count * substring.length ** 2.2;
     if (score > bestScore) {
       bestSubstring = substring;
@@ -97,44 +106,62 @@ function getCompressionRatio(codebook: string[], strings: string[]): number {
 }
 
 export default function generate(originalStrings: string[]): string[] {
-  let strings = originalStrings;
   const codebook: string[] = [];
   const counter = new StringCounter();
-  addCounts(strings, counter);
+  {
+    console.log('Reticulating splines...');
+    const strings = new Set(originalStrings);
 
-  for (let i = 0; i < 254; i += 1) {
-    const substring = getNextBestSubstring(counter);
-    if (!substring) {
-      console.log('No more strings', i);
-      break;
-    }
+    console.log('Counting substrings.');
+    addCounts(strings, counter);
 
-    codebook.push(substring);
-    counter.delete(substring);
+    // Only keep up to 10000 top substrings
+    // counter.trim(new Set(Array.from(counter.entries()).sort(
+    //   (v1, v2) => (v2[1] * v2[0].length ** 2.2) - (v1[1] * v1[0].length ** 2.2),
+    // ).slice(0, 10000).map(([substring]) => substring)));
 
-    console.log(
-      `+ ${substring} = ${getCompressionRatio(codebook, originalStrings)}%`,
-    );
+    console.log('Creating codebook.');
+    for (let i = 0; i < 254; i += 1) {
+      const substring = getNextBestSubstring(counter);
+      if (!substring) {
+        console.log('No more strings', i);
+        break;
+      }
 
-    const newStrings = [];
-    for (let j = 0; j < strings.length; j += 1) {
-      const str = strings[j];
-      if (str.indexOf(substring) !== -1) {
-        const parts = str.split(substring);
+      codebook.push(substring);
+      counter.delete(substring);
 
-        // Update count of all substrings
-        delCounts([str], counter);
-        addCounts(parts, counter);
+      console.log(
+        `+ ${substring} = ${getCompressionRatio(codebook, originalStrings)}%`,
+      );
 
-        for (let k = 0; k < parts.length; k += 1) {
-          newStrings.push(parts[k]);
+      // TODO - does not seem to work? Some counts become zero at some point
+      // TODO - do we need to keep `strings` around if we have `counter`?
+      const toAdd: Set<string> = new Set();
+      const toDel: Set<string> = new Set();
+      for (const str of strings) {
+        if (str.includes(substring)) {
+          toDel.add(str);
+          for (const part of str.split(substring)) {
+            toAdd.add(part);
+          }
         }
-      } else {
-        newStrings.push(str);
+      }
+
+      // Update by adding new substrings
+      console.log('Add', toAdd.size);
+      addCounts(toAdd, counter);
+      for (const str of toAdd) {
+        strings.add(str);
+      }
+
+      // Update by deleting substrings
+      console.log('Del', toDel.size);
+      delCounts(toDel, counter);
+      for (const str of toDel) {
+        strings.delete(str);
       }
     }
-
-    strings = newStrings;
   }
 
   // Count remaining occurrences of letters in strings
@@ -153,6 +180,7 @@ export default function generate(originalStrings: string[]): string[] {
   console.log(lettersCodebook);
 
   let bestRatio = getCompressionRatio(codebook, originalStrings);
+  let roundsWithNoImprovements = 0;
 
   // Fine-tune codebook with letters
   for (let i = 0; i < lettersCodebook.length; i += 1) {
@@ -168,6 +196,10 @@ export default function generate(originalStrings: string[]): string[] {
         )}`,
       );
       continue;
+    }
+
+    if (roundsWithNoImprovements > 3) {
+      console.log('Stopping optimization process after 3 rounds');
     }
 
     // Codebook is full, try to find a spot
@@ -189,6 +221,8 @@ export default function generate(originalStrings: string[]): string[] {
       console.log(`replacing ${codebook[insertAt]} with ${letter} = ${bestR}%`);
       codebook[insertAt] = letter;
       bestRatio = bestR;
+    } else {
+      roundsWithNoImprovements += 1;
     }
   }
 
