@@ -1,12 +1,12 @@
 const Benchmark = require('benchmark');
-const { compress, decompress, factory } = require('.');
+const { compress, decompress, Smaz, getCompressedSize } = require('.');
 
 (function main() {
   const suite = new Benchmark.Suite;
 
   suite
     .add('#factory', function() {
-      return factory([
+      return new Smaz([
         ' ',
         'the',
         'e',
@@ -270,6 +270,23 @@ const { compress, decompress, factory } = require('.');
       compress('http://google.com');
       compress('http://programming.reddit.com');
       compress('http://github.com/antirez/smaz/tree/master');
+    })
+    .add('#getCompressedSize', function() {
+      getCompressedSize('');
+      getCompressedSize('This is a small string');
+      getCompressedSize('foobar');
+      getCompressedSize('the end');
+      getCompressedSize('not-a-g00d-Exampl333');
+      getCompressedSize('Smaz is a simple compression library');
+      getCompressedSize('Nothing is more difficult, and therefore more precious, than to be able to decide');
+      getCompressedSize('this is an example of what works very well with smaz');
+      getCompressedSize('1000 numbers 2000 will 10 20 30 compress very little');
+      getCompressedSize('Nel mezzo del cammin di nostra vita, mi ritrovai in una selva oscura');
+      getCompressedSize('Mi illumino di immenso');
+      getCompressedSize("L'autore di questa libreria vive in Sicilia");
+      getCompressedSize('http://google.com');
+      getCompressedSize('http://programming.reddit.com');
+      getCompressedSize('http://github.com/antirez/smaz/tree/master');
     })
     .add('#decompress', function() {
       decompress(new Uint8Array([]));

@@ -60,19 +60,20 @@ function tests(
       it('has perfect compression on small input', () => {
         const custom = new Smaz(generate(['foo', 'bar', 'baz']));
 
+        const checkCompress = (str: string, size: number) => {
+          const compressed = custom.compress(str);
+          expect(compressed).toHaveLength(size);
+          expect(custom.decompress(compressed)).toBe(str);
+        };
+
         // Compression is one byte for seen strings
         for (const str of ['foo', 'bar', 'baz']) {
-          const compressed = custom.compress(str);
-          expect(compressed).toHaveLength(1);
-          expect(custom.decompress(compressed)).toBe(str);
+          checkCompress(str, 1);
         }
 
-        // No overhead for letters in a different order
-        for (const str of ['fof', 'zar', 'boz']) {
-          const compressed = custom.compress(str);
-          expect(compressed).toHaveLength(3);
-          expect(custom.decompress(compressed)).toBe(str);
-        }
+        checkCompress('fof', 2);
+        checkCompress('zar', 2);
+        checkCompress('boz', 3);
       });
     });
   });

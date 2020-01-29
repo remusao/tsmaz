@@ -7,21 +7,25 @@ class StringCounter {
     this.map = new Map();
   }
 
+  public get(key: string): number {
+    const count = this.map.get(key);
+    if (count === undefined) {
+      return 0;
+    }
+    return count;
+  }
+
   public incr(key: string): void {
-    this.map.set(key, (this.map.get(key) || 0) + 1);
+    this.map.set(key, this.get(key) + 1);
   }
 
   public decr(key: string): void {
-    this.map.set(key, (this.map.get(key) || 1) - 1);
-  }
+    const count = this.get(key);
 
-  public delete(key: string): void {
-    this.map.delete(key);
-  }
-
-  public update(keys: string[]): void {
-    for (let i = 0; i < keys.length; i += 1) {
-      this.incr(keys[i]);
+    if (count === 0) {
+      this.map.delete(key);
+    } else {
+      this.map.set(key, count - 1);
     }
   }
 
@@ -36,13 +40,12 @@ function extractNgrams(str: string): string[] {
   }
 
   const ngrams: string[] = [];
-  const maxNgramSize = 70;
+  // const maxNgramSize = 200;
 
-  // Generate n-grams
   const len = str.length;
-  for (let j = 0; j < str.length - 1; j += 1) {
+  for (let j = 0; j < len - 1; j += 1) {
     const remainingChars = len - j;
-    for (let k = 2; k <= maxNgramSize && k <= remainingChars; k += 1) {
+    for (let k = 1; k <= remainingChars; k += 1) {
       ngrams.push(str.slice(j, j + k));
     }
   }
@@ -51,31 +54,32 @@ function extractNgrams(str: string): string[] {
 }
 
 function addCounts(strings: string[], counter: StringCounter): void {
-  for (let i = 0; i < strings.length; i += 1) {
-    counter.update(extractNgrams(strings[i]));
-  }
-}
-
-function delCounts(strings: string[], counter: StringCounter): void {
-  for (let i = 0; i < strings.length; i += 1) {
-    const str = strings[i];
-    const ngrams = extractNgrams(str);
-    for (let j = 0; j < ngrams.length; j += 1) {
-      counter.decr(ngrams[j]);
+  for (const str of strings) {
+    for (const ngram of extractNgrams(str)) {
+      counter.incr(ngram);
     }
   }
 }
 
-function getNextBestSubstring(substrings: StringCounter): string {
-  // Get best substring based on length and number of occurrences
+function delCounts(strings: string[], counter: StringCounter): void {
+  for (const str of strings) {
+    for (const ngram of extractNgrams(str)) {
+      counter.decr(ngram);
+    }
+  }
+}
+
+function getNextBestSubstring(counter: StringCounter): string {
   let bestScore = 0;
   let bestSubstring = '';
-  for (const [substring, count] of substrings.entries()) {
-    // const score = count * substring.length * Math.log(substring.length);
-    const score = count * substring.length ** 2.2;
-    if (score > bestScore) {
-      bestSubstring = substring;
-      bestScore = score;
+  for (const [substring, count] of counter.entries()) {
+    if (count > 1 && substring.length > 1) {
+      // Who does not like a bit of magic?
+      const score = count * substring.length ** 2.1;
+      if (score > bestScore) {
+        bestSubstring = substring;
+        bestScore = score;
+      }
     }
   }
 
@@ -87,8 +91,7 @@ function getCompressionRatio(codebook: string[], strings: string[]): number {
   let totalCompressed = 0;
   let totalUncompressed = 0;
 
-  for (let i = 0; i < strings.length; i += 1) {
-    const str = strings[i];
+  for (const str of strings) {
     totalCompressed += smaz.getCompressedSize(str);
     totalUncompressed += str.length;
   }
@@ -96,46 +99,144 @@ function getCompressionRatio(codebook: string[], strings: string[]): number {
   return 100.0 * (totalCompressed / totalUncompressed);
 }
 
-export default function generate(originalStrings: string[]): string[] {
-  let strings = originalStrings;
-  const codebook: string[] = [];
-  const counter = new StringCounter();
-  addCounts(strings, counter);
+function fineTuneCodebook(
+  codebook: string[],
+  strings: string[],
+  candidates: string[],
+): void {
+  let bestRatio = getCompressionRatio(codebook, strings);
+  let roundsWithNoImprovements = 0;
 
-  for (let i = 0; i < 254; i += 1) {
-    const substring = getNextBestSubstring(counter);
-    if (!substring) {
-      console.log('No more strings', i);
+  // Fine-tune codebook with letters
+  for (const candidate of candidates) {
+    // If codebook is not full yet, just add the letter at the end
+    if (codebook.length < 254) {
+      codebook.push(candidate);
+      console.log(
+        `Codebook not full, adding : ${candidate} = ${getCompressionRatio(
+          codebook,
+          strings,
+        )}`,
+      );
+      continue;
+    }
+
+    if (roundsWithNoImprovements >= 3) {
+      console.log('Stopping optimization process after 3 rounds');
       break;
     }
 
-    codebook.push(substring);
-    counter.delete(substring);
-
-    console.log(
-      `+ ${substring} = ${getCompressionRatio(codebook, originalStrings)}%`,
-    );
-
-    const newStrings = [];
-    for (let j = 0; j < strings.length; j += 1) {
-      const str = strings[j];
-      if (str.indexOf(substring) !== -1) {
-        const parts = str.split(substring);
-
-        // Update count of all substrings
-        delCounts([str], counter);
-        addCounts(parts, counter);
-
-        for (let k = 0; k < parts.length; k += 1) {
-          newStrings.push(parts[k]);
-        }
-      } else {
-        newStrings.push(str);
+    // Codebook is full, try to find a spot
+    let bestR = 100;
+    let insertAt = -1;
+    console.log('?', candidate);
+    for (let j = 0; j < codebook.length; j += 1) {
+      const prev = codebook[j];
+      codebook[j] = candidate;
+      const ratio = getCompressionRatio(codebook, strings);
+      codebook[j] = prev;
+      if (ratio < bestR) {
+        bestR = ratio;
+        insertAt = j;
       }
     }
 
-    strings = newStrings;
+    if (bestR < bestRatio) {
+      console.log(
+        `replacing ${codebook[insertAt]} with ${candidate} = ${bestR}% (-${(
+          bestRatio - bestR
+        ).toFixed(3)}%)`,
+      );
+      codebook[insertAt] = candidate;
+      bestRatio = bestR;
+      roundsWithNoImprovements = 0;
+    } else {
+      roundsWithNoImprovements += 1;
+    }
   }
+}
+
+export default function generate(originalStrings: string[]): string[] {
+  const codebook: string[] = [];
+  const counter = new StringCounter();
+
+  {
+    console.log('Counting substrings.');
+    const removedStrings: Set<string> = new Set();
+    const strings = [...originalStrings];
+    addCounts(strings, counter);
+
+    console.log('Creating codebook.');
+    for (let i = 0; i < 254; i += 1) {
+      const substring = getNextBestSubstring(counter);
+      if (substring.length === 0) {
+        console.log('No more strings', i);
+        break;
+      }
+
+      codebook.push(substring);
+
+      console.log(
+        `+ ${substring} = ${getCompressionRatio(codebook, originalStrings)}%`,
+      );
+
+      const toAdd: string[] = [];
+      const toDel: string[] = [];
+      for (const str of strings) {
+        if (
+          removedStrings.has(str) === false &&
+          str.includes(substring) === true
+        ) {
+          toDel.push(str);
+          for (const part of str.split(substring)) {
+            if (part.length !== 0) {
+              toAdd.push(part);
+            }
+          }
+        }
+      }
+
+      // Update by adding new substrings
+      // console.log('Add', toAdd.length);
+      addCounts(toAdd, counter);
+      for (const str of toAdd) {
+        strings.push(str);
+      }
+
+      // Update by deleting substrings
+      // console.log('Del', toDel.length);
+      delCounts(toDel, counter);
+      for (const str of toDel) {
+        removedStrings.add(str);
+      }
+    }
+  }
+
+  // Fine-tune with 3-grams, 2-grams
+  for (const { n, candidates } of [
+    { n: 6, candidates: 10 },
+    { n: 5, candidates: 10 },
+    { n: 4, candidates: 10 },
+    { n: 3, candidates: 10 },
+    { n: 2, candidates: 10 },
+  ]) {
+    const ngrams: [string, number][] = [];
+    for (const [substring, count] of counter.entries()) {
+      if (substring.length === n) {
+        ngrams.push([substring, count]);
+      }
+    }
+
+    // Sort ngrams from most popular to least popular
+    ngrams.sort((v1, v2) => v2[1] - v1[1]);
+    console.log('Fine-tune codebook with ngrams', ngrams);
+    fineTuneCodebook(
+      codebook,
+      originalStrings,
+      ngrams.map(([ngram]) => ngram).slice(0, candidates),
+    );
+  }
+
 
   // Count remaining occurrences of letters in strings
   const letters = new StringCounter();
@@ -150,47 +251,13 @@ export default function generate(originalStrings: string[]): string[] {
   const lettersCodebook = Array.from(letters.entries()).sort(
     (v1, v2) => v2[1] - v1[1],
   );
-  console.log(lettersCodebook);
 
-  let bestRatio = getCompressionRatio(codebook, originalStrings);
-
-  // Fine-tune codebook with letters
-  for (let i = 0; i < lettersCodebook.length; i += 1) {
-    const letter = lettersCodebook[i][0];
-
-    // If codebook is not full yet, just add the letter at the end
-    if (codebook.length < 254) {
-      codebook.push(letter);
-      console.log(
-        `Codebook not full, adding letter: ${letter} = ${getCompressionRatio(
-          codebook,
-          originalStrings,
-        )}`,
-      );
-      continue;
-    }
-
-    // Codebook is full, try to find a spot
-    let bestR = 100;
-    let insertAt = -1;
-    console.log('> letter', letter);
-    for (let j = 0; j < codebook.length; j += 1) {
-      const prev = codebook[j];
-      codebook[j] = letter;
-      const ratio = getCompressionRatio(codebook, originalStrings);
-      codebook[j] = prev;
-      if (ratio < bestR) {
-        bestR = ratio;
-        insertAt = j;
-      }
-    }
-
-    if (bestR < bestRatio) {
-      console.log(`replacing ${codebook[insertAt]} with ${letter} = ${bestR}%`);
-      codebook[insertAt] = letter;
-      bestRatio = bestR;
-    }
-  }
+  console.log('Fine-tune codebook with letters', lettersCodebook);
+  fineTuneCodebook(
+    codebook,
+    originalStrings,
+    lettersCodebook.map(([letter]) => letter),
+  );
 
   return codebook;
 }

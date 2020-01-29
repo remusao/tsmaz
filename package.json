@@ -3,8 +3,8 @@
   "version": "1.4.0",
   "description": "TypeScript port of the smaz string compression library",
   "repository": "https://github.com/remusao/tsmaz",
-  "main": "build/cjs/tsmaz.js",
-  "module": "build/es6/tsmaz.js",
+  "main": "dist/tsmaz.cjs.min.js",
+  "module": "dist/tsmaz.esm.min.js",
   "browser": "dist/tsmaz.umd.min.js",
   "types": "dist/tsmaz.d.ts",
   "files": [

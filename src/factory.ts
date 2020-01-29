@@ -106,7 +106,6 @@ export default class Smaz {
 
     if (verbatimIndex !== 0) {
       bufferIndex += 2 + (verbatimIndex === 1 ? 0 : verbatimIndex);
-      verbatimIndex = 0;
     }
 
     return bufferIndex;
