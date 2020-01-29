@@ -1,9 +1,9 @@
 {
   "name": "tsmaz",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "TypeScript port of the smaz string compression library",
   "repository": "https://github.com/remusao/tsmaz",
-  "main": "dist/tsmaz.cjs.min.js",
+  "main": "build/cjs/tsmaz.js",
   "module": "build/es6/tsmaz.js",
   "browser": "dist/tsmaz.umd.min.js",
   "types": "dist/tsmaz.d.ts",
@@ -14,6 +14,7 @@
   "scripts": {
     "clean": "rm -rfv dist build coverage",
     "lint": "tslint --config tslint.json --project .",
+    "watch": "tsc -p . --outDir build/cjs --module commonjs --watch",
     "build-cjs": "tsc -p . --outDir build/cjs --module commonjs",
     "build-es6": "tsc -p . --outDir build/es6 --module esnext",
     "build": "concurrently 'npm run build-cjs' 'npm run build-es6'",
@@ -30,17 +31,16 @@
   "author": "Rémi Berson",
   "license": "MIT",
   "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "^0.10.0",
-    "@types/jest": "^24.0.13",
+    "@ampproject/rollup-plugin-closure-compiler": "^0.20.0",
+    "@types/jest": "^25.1.0",
     "benchmark": "^2.1.4",
-    "concurrently": "^4.1.1",
-    "jest": "^24.8.0",
+    "concurrently": "^5.1.0",
+    "jest": "^25.1.0",
     "microtime": "^3.0.0",
-    "rollup": "^1.12.1",
-    "ts-jest": "^24.0.2",
-    "tslib": "^1.9.3",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "rollup": "^1.30.1",
+    "ts-jest": "^25.0.0",
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   },
   "dependencies": {}
 }
